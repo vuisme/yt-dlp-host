@@ -1,0 +1,36 @@
+# Git
+.git
+.gitignore
+
+# Docker
+Dockerfile
+.dockerignore
+docker-compose.yml
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+venv/
+*.env
+.env
+
+# IDE/Editor folders
+.vscode/
+.idea/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Local data/config (quan trọng: không đưa vào image)
+downloads/
+jsons/
+# config.py # Bỏ dấu # nếu bạn mount config.py qua docker-compose và không muốn nó trong image
+
+# Tests/Docs (nếu có và không cần trong image)
+# tests/
+# docs/
+# README.md
+# LICENSE
