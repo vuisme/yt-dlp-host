@@ -1,0 +1,56 @@
+name: Docker Build and Push (amd64/arm64)
+
+# Chạy workflow này khi có push vào nhánh 'main'
+on:
+  push:
+    branches: [ "main" ] # Bạn có thể thay đổi 'main' thành nhánh khác nếu muốn
+  # Cho phép chạy thủ công từ tab Actions trên GitHub
+  workflow_dispatch:
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest # Sử dụng runner Ubuntu mới nhất
+
+    permissions:
+      contents: read # Cần quyền đọc để checkout code
+      packages: write # Cần quyền ghi để đẩy image lên registry (như Docker Hub)
+
+    steps:
+      # Bước 1: Checkout code từ repository
+      - name: Checkout repository
+        uses: actions/checkout@v4 # Sử dụng action checkout phiên bản 4
+
+      # Bước 2: Thiết lập QEMU để build multi-platform
+      # QEMU cần thiết để giả lập kiến trúc ARM trên runner AMD64
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      # Bước 3: Thiết lập Docker Buildx
+      # Buildx là plugin Docker CLI cho phép build multi-platform
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      # Bước 4: Đăng nhập vào Docker Hub
+      # Sử dụng secrets đã tạo để đăng nhập an toàn
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      # Bước 5: Trích xuất metadata (tags, labels) cho Docker image
+      # Tự động tạo các tag như 'latest', tag theo commit SHA, tag theo tên nhánh/tag Git
+      - name: Extract Docker metadata
+        id: meta # Đặt ID để tham chiếu output ở bước sau
+        uses: docker/metadata-action@v5
+        with:
+          # Thay 'your-dockerhub-username/your-repo-name' bằng tên image bạn muốn trên Docker Hub
+          images: ${{ secrets.DOCKERHUB_USERNAME }}/yt-dlp-host
+
+      # Bước 6: Build và đẩy Docker image
+      # Build cho cả linux/amd64 và linux/arm64, sau đó đẩy lên Docker Hub
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: . # Sử dụng thư mục gốc làm context build
+          file: ./Dockerfile # Chỉ
