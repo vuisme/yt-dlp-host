@@ -32,7 +32,7 @@ WORKDIR /app
 # Dùng --no-install-recommends và dọn dẹp cache apt
 RUN apt-get update && \
     apt-get install -y --no-install-recommends ffmpeg && \
-    apt-get clean && \ # Dọn dẹp thêm cache apt
+    apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
 # Tạo user không phải root để chạy ứng dụng (bảo mật tốt hơn)
