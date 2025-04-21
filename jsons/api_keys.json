@@ -1,1 +1,7 @@
-{}
+{
+    "admin_key": {
+        "key": "DitConMeMay",
+        "name": "cpanel10x", 
+        "permissions": ["create_key", "delete_key", "get_key", "get_keys", "get_video", "get_audio", "get_live_video", "get_live_audio", "get_info"]
+    }
+}
