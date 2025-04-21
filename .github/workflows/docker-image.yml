@@ -53,4 +53,10 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: . # Sử dụng thư mục gốc làm context build
-          file: ./Dockerfile # Chỉ
+          file: ./Dockerfile # Chỉ định Dockerfile cần build
+          platforms: linux/amd64,linux/arm64 # Các nền tảng cần build
+          push: ${{ github.event_name != 'pull_request' }} # Chỉ push khi không phải là PR (ví dụ: push trực tiếp vào 'main')
+          tags: ${{ steps.meta.outputs.tags }} # Sử dụng tags được tạo bởi metadata-action
+          labels: ${{ steps.meta.outputs.labels }} # Sử dụng labels được tạo bởi metadata-action
+          cache-from: type=gha # Sử dụng cache của GitHub Actions để tăng tốc build
+          cache-to: type=gha,mode=max # Lưu cache sau khi build thành công
